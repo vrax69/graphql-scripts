@@ -1,10 +1,13 @@
+## 📂 Estructura del proyecto
+
+```bash
 graphql-scripts/
  ├── src/
  │   ├── index.js           ← Punto de entrada del servidor (arranca Apollo)
  │   ├── db.js              ← Conexión MySQL (reutilizable)
  │   ├── schema.js          ← Definición del esquema GraphQL (qué datos hay)
  │   ├── resolvers.js       ← Lógica que obtiene los datos
- │   └── modules/           ← (Futuro: carpetas separadas por entidad)
+ │   └── modules/           ← Futuro: carpetas separadas por entidad
  │        ├── rates/
  │        │   ├── rateSchema.js
  │        │   ├── rateResolvers.js
