@@ -1,23 +1,22 @@
-## 📂 Estructura del proyecto
+## 📂 Segunda estructura del proyecto
 
-```bash
-graphql-scripts/
- ├── src/
- │   ├── index.js           ← Punto de entrada del servidor (arranca Apollo)
- │   ├── db.js              ← Conexión MySQL (reutilizable)
- │   ├── schema.js          ← Definición del esquema GraphQL (qué datos hay)
- │   ├── resolvers.js       ← Lógica que obtiene los datos
- │   └── modules/           ← Futuro: carpetas separadas por entidad
- │        ├── rates/
- │        │   ├── rateSchema.js
- │        │   ├── rateResolvers.js
- │        │   └── rateQueries.sql
- │        └── users/
- │            ├── userSchema.js
- │            ├── userResolvers.js
- │            └── userMutations.sql
- ├── .env
- ├── .gitignore
- ├── package.json
- ├── nodemon.json           ← (opcional, para ajustes del dev mode)
- └── README.md
+```graphql-scripts/
+│
+├─ .env
+├─ src/
+│   ├─ index.js          ← servidor principal
+│   ├─ db.js             ← conexión MySQL (ya lista)
+│   ├─ schema.js         ← une todos los typeDefs
+│   ├─ resolvers.js      ← une todos los resolvers
+│   │
+│   ├─ rates/
+│   │   ├─ ratesSchema.js     ← modelo de rates_view
+│   │   └─ ratesResolvers.js  ← query rates()
+│   │
+│   ├─ users/
+│   │   ├─ userSchema.js      ← modelo de usuarios + proveedores
+│   │   └─ userResolvers.js   ← query usuarios(), usuario()
+│   │
+│   └─ scripts/
+│       ├─ scriptSchema.js    ← modelo de guiones (teleprompter)
+│       └─ scriptResolvers.js ← queries de guiones
