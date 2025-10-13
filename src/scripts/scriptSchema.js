@@ -2,13 +2,19 @@ import { gql } from "graphql-tag";
 
 export const scriptTypeDefs = gql`
   type Script {
-    id: ID!
-    texto: String
-    usuario: User
-    rate: RateView
+    script_id: ID!
+    provider_name: String
+    state: String
+    language: String
+    channel: String
+    script_title: String
+    version: String
+    content: String
+    created_at: String
+    updated_at: String
   }
 
-  extend type Query {
-    guion(user_id: ID!, rate_id: String!): Script
+  type Query {
+    scriptsByUser(user_id: Int!): [Script]
   }
 `;

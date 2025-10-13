@@ -5,6 +5,7 @@ import { scriptResolvers } from "./scripts/scriptResolvers.js";
 export const resolvers = {
   Query: {
     ...userResolvers.Query,
+    ...scriptResolvers.Query,   // ← añade esta línea
     rates: async (_, { limit = 10 }) => {
       const [rows] = await db.query(`
         SELECT 
