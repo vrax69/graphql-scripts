@@ -342,8 +342,4 @@ Tecnologías: *Node.js, Express, Apollo, MySQL, GraphQL*
 
 ```
 
----
-
-¿Quieres que te agregue al final un **diagrama visual de arquitectura** (en formato Mermaid para GitHub o VSCode) que muestre cómo se comunican los módulos y las bases de datos?  
-Ejemplo: `Frontend → GraphQL Server → MySQL (rates_db, scripts_db, staging)`
-```
+estas son mis tablas actuales Table: script_assignments Columns: assignment_id bigint AI PK script_id bigint user_id bigint role enum('reader','editor','reviewer') Table: script_links Columns: link_id bigint AI PK script_id bigint rate_id varchar(50) utility_id bigint Table: script_sections Columns: section_id bigint AI PK script_id bigint section_order int section_name varchar(255) section_text longtext conditions json Table: scripts Columns: script_id bigint AI PK provider_name varchar(255) state varchar(50) language enum('EN','ES') channel enum('Inbound','Outbound','TPV','QA') script_title varchar(255) version varchar(50) content longtext created_at timestamp updated_at timestamp
