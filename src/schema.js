@@ -1,6 +1,8 @@
 import { gql } from "graphql-tag";
 import { userTypeDefs } from "./users/userSchema.js";
 import { scriptTypeDefs } from "./scripts/scriptSchema.js";
+import { dynamicTypeDefs } from "./scriptsDynamic/dynamicSchema.js";
+
 
 export const typeDefs = [
   gql`
@@ -29,5 +31,8 @@ export const typeDefs = [
     }
   `,
   userTypeDefs,
-  scriptTypeDefs, // ✅ AGREGA ESTA LÍNEA
+  scriptTypeDefs,
+  dynamicTypeDefs
 ];
+
+

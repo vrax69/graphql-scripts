@@ -1,0 +1,111 @@
+# Consultas de prueba para el motor de scripts dinámicos
+# Copia y pega estas consultas en GraphQL Playground o tu cliente GraphQL
+
+# 1. Obtener planes de tarifas para un proveedor y estado específico
+query GetRatePlans {
+  ratePlans(state: "TX", supplier: "TXU Energy") {
+    rate_id
+    product_name
+    supplier
+    state
+    rate
+    etf
+    msf
+    duration
+    unit_of_measure
+    company_dba_name
+    ldc
+  }
+}
+
+# 2. Obtener plantilla de script sin renderizar
+query GetScriptTemplate {
+  scriptTemplate(
+    supplier: "TXU Energy"
+    state: "TX"
+    channel: "phone"
+    language: "es"
+  ) {
+    template_id
+    script_title
+    supplier
+    state
+    channel
+    language
+    sections {
+      section_id
+      order
+      title
+      content_template
+      required_variables
+    }
+  }
+}
+
+# 3. Obtener script completo renderizado con datos reales
+query GetRenderedScript {
+  renderedScript(
+    supplier: "TXU Energy"
+    state: "TX"
+    channel: "phone"
+    language: "es"
+    rateId: "12345"
+  ) {
+    template_id
+    script_title
+    supplier
+    state
+    channel
+    language
+    sections {
+      section_id
+      order
+      title
+      rendered_content
+      required_variables
+    }
+  }
+}
+
+# 4. Mutation para actualizar una sección del script (para QA)
+mutation UpdateScriptSection {
+  updateScriptSection(input: {
+    section_id: "1"
+    title: "Nuevo título de sección"
+    content_template: "Hola, este es el nuevo contenido con [SUPPLIER] y [RATE] por [UNIT_OF_MEASURE]."
+  }) {
+    section_id
+    order
+    title
+    content_template
+    required_variables
+  }
+}
+
+# 5. Consulta combinada: obtener tarifas y plantilla en una sola consulta
+query GetCompleteData {
+  # Obtener tarifas
+  ratePlans(state: "TX", supplier: "TXU Energy") {
+    rate_id
+    product_name
+    rate
+    unit_of_measure
+    supplier
+  }
+  
+  # Obtener plantilla
+  scriptTemplate(
+    supplier: "TXU Energy"
+    state: "TX"
+    channel: "phone"
+    language: "es"
+  ) {
+    template_id
+    script_title
+    sections {
+      section_id
+      title
+      content_template
+    }
+  }
+}
