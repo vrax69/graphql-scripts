@@ -1,19 +1,32 @@
-⚡️ GraphQL Energy Backend (Node.js + Apollo + MySQL)
+Perfecto 🔥 — aquí tienes el **README.md completo, limpio y formateado** para que lo copies y pegues directamente en tu proyecto (ya corregido para que se vea bien en GitHub o VSCode).
+Está en formato **Markdown estándar** con emojis, encabezados y tablas bien alineadas 👇
 
-API modular construida con Node.js, Express y Apollo Server (GraphQL).
-Permite centralizar y consultar datos de usuarios, tarifas (rates) y guiones (scripts)
-desde diferentes bases de datos MySQL conectadas al entorno de call center energético NWFG.
+---
 
-🚀 Características principales
+```markdown
+# ⚡️ GraphQL Energy Backend (Node.js + Apollo + MySQL)
 
-✅ API GraphQL moderna sobre Express
-✅ Conexión unificada a múltiples bases MySQL (rates_db, user_data_tpv_staging, scripts_db)
-✅ Modularidad: cada dominio tiene su propio schema y resolvers
-✅ Compatible con PM2, Docker o cualquier entorno Node
-✅ Reutiliza tus datos existentes (no rompe el backend anterior)
-✅ Listo para integrarse con el frontend React NWFG
+API modular construida con **Node.js**, **Express** y **Apollo Server (GraphQL)**.  
+Permite centralizar y consultar datos de **usuarios**, **tarifas (rates)** y **guiones (scripts)**  
+desde diferentes bases de datos **MySQL** conectadas al entorno de **call center energético NWFG**.
 
-📁 Estructura del Proyecto
+---
+
+## 🚀 Características principales
+
+✅ API GraphQL moderna sobre **Express**  
+✅ Conexión unificada a múltiples bases MySQL (`rates_db`, `user_data_tpv_staging`, `scripts_db`)  
+✅ Modularidad: cada dominio tiene su propio *schema* y *resolvers*  
+✅ Compatible con **PM2**, **Docker** o cualquier entorno Node  
+✅ Reutiliza tus datos existentes (no rompe el backend anterior)  
+✅ Listo para integrarse con el **frontend React NWFG**
+
+---
+
+## 📁 Estructura del Proyecto
+
+```
+
 graphql-scripts/
 │
 ├── src/
@@ -35,18 +48,29 @@ graphql-scripts/
 ├── pnpm-lock.yaml            → Control de dependencias exacto
 └── README.md                 → Documentación del proyecto
 
-⚙️ Instalación
-1️⃣ Clonar el repositorio
+````
+
+---
+
+## ⚙️ Instalación
+
+### 1️⃣ Clonar el repositorio
+```bash
 git clone https://github.com/tuusuario/graphql-scripts.git
 cd graphql-scripts
+````
 
-2️⃣ Instalar dependencias
+### 2️⃣ Instalar dependencias
+
+```bash
 pnpm install
+```
 
+*(También puedes usar `npm install` o `yarn` si lo prefieres.)*
 
-(También puedes usar npm install o yarn si lo prefieres.)
+### 3️⃣ Crear archivo `.env`
 
-3️⃣ Crear archivo .env
+```bash
 NODE_ENV=development
 PORT=4000
 
@@ -54,46 +78,60 @@ DB_HOST=172.26.12.67
 DB_USER=admin
 DB_PASSWORD=Usuario19.
 DB_NAME=rates_db
+```
 
-4️⃣ Ejecutar el servidor
+### 4️⃣ Ejecutar el servidor
+
+```bash
 pnpm dev
-
+```
 
 El servidor se ejecutará en:
 
+```
 http://localhost:4000/graphql
+```
 
-🧠 Arquitectura de módulos
-🗄️ db.js — Conexión a MySQL
+---
 
-Configura un pool de conexiones con mysql2/promise.
+## 🧠 Arquitectura de módulos
+
+### 🗄️ `db.js` — Conexión a MySQL
+
+Configura un *pool de conexiones* con `mysql2/promise`.
 Permite que todas las queries compartan la misma conexión optimizada.
 
+```js
 export const db = mysql.createPool({
   host: process.env.DB_HOST,
   user: process.env.DB_USER,
   password: process.env.DB_PASSWORD,
   database: process.env.DB_NAME,
 });
+```
 
-🧩 index.js — Servidor Express + Apollo GraphQL
+---
 
-Arranca el servidor y monta el endpoint /graphql.
+### 🧩 `index.js` — Servidor Express + Apollo GraphQL
 
+Arranca el servidor y monta el endpoint `/graphql`.
+
+```js
 import { ApolloServer } from "@apollo/server";
 import { expressMiddleware } from "@apollo/server/express4";
+```
 
+* Configura **CORS** y **BodyParser**
+* Inicia el servidor Apollo
+* Inyecta el contexto `db` a todos los resolvers
 
-Configura CORS y BodyParser
+---
 
-Inicia el servidor Apollo
+### 🧬 `schema.js` — Esquema principal GraphQL
 
-Inyecta el contexto db a todos los resolvers
+Fusiona los **tipos** de los módulos (`users`, `scripts`, `rates`).
 
-🧬 schema.js — Esquema principal GraphQL
-
-Fusiona los tipos de los módulos (users, scripts, rates).
-
+```js
 export const typeDefs = [
   gql`
     type RateView {
@@ -109,11 +147,15 @@ export const typeDefs = [
   userTypeDefs,
   scriptTypeDefs
 ];
+```
 
-🧠 resolvers.js — Resolvers globales
+---
+
+### 🧠 `resolvers.js` — Resolvers globales
 
 Une todos los resolvers y ejecuta las consultas SQL.
 
+```js
 export const resolvers = {
   Query: {
     ...userResolvers.Query,
@@ -124,12 +166,17 @@ export const resolvers = {
     },
   },
 };
+```
 
-👥 Módulo de Usuarios (/src/users/)
-userSchema.js
+---
+
+## 👥 Módulo de Usuarios (`/src/users/`)
+
+### `userSchema.js`
 
 Define los tipos y relaciones de los usuarios del call center:
 
+```graphql
 type User {
   user_id: ID!
   nombre: String
@@ -147,11 +194,13 @@ type ProviderAccount {
 type Query {
   usuarios: [User]
 }
+```
 
-userResolvers.js
+### `userResolvers.js`
 
-Consulta la base user_data_tpv_staging:
+Consulta la base `user_data_tpv_staging`:
 
+```js
 Query: {
   usuarios: async () => {
     const [rows] = await db.query(`
@@ -161,12 +210,17 @@ Query: {
     return rows;
   },
 }
+```
 
-📜 Módulo de Guiones (/src/scripts/)
-scriptSchema.js
+---
+
+## 📜 Módulo de Guiones (`/src/scripts/`)
+
+### `scriptSchema.js`
 
 Estructura GraphQL de los guiones:
 
+```graphql
 type Script {
   script_id: ID!
   provider_name: String
@@ -181,11 +235,13 @@ type Script {
 type Query {
   scriptsByUser(user_id: Int!): [Script]
 }
+```
 
-scriptResolvers.js
+### `scriptResolvers.js`
 
 Obtiene los scripts asignados a cada usuario:
 
+```js
 Query: {
   scriptsByUser: async (_, { user_id }) => {
     const [rows] = await db.query(`
@@ -198,9 +254,15 @@ Query: {
     return rows;
   }
 }
+```
 
-🧩 Ejemplos de Queries
-Obtener tarifas (rates)
+---
+
+## 🧩 Ejemplos de Queries
+
+### Obtener tarifas (rates)
+
+```graphql
 query {
   rates(limit: 5) {
     Product_Name
@@ -208,8 +270,11 @@ query {
     State
   }
 }
+```
 
-Obtener usuarios
+### Obtener usuarios
+
+```graphql
 query {
   usuarios {
     nombre
@@ -218,8 +283,11 @@ query {
     centro
   }
 }
+```
 
-Obtener scripts asignados a un usuario
+### Obtener scripts asignados a un usuario
+
+```graphql
 query {
   scriptsByUser(user_id: 18) {
     script_title
@@ -228,34 +296,54 @@ query {
     version
   }
 }
+```
 
-🛠 Dependencias principales
-Paquete	Uso
-@apollo/server	Motor GraphQL
-express	Framework HTTP base
-cors	Permitir llamadas desde otros orígenes
-body-parser	Parseo de JSON
-dotenv	Carga de variables de entorno
-mysql2	Cliente MySQL
-graphql	Núcleo de GraphQL
-nodemon	Reinicio automático en desarrollo
-⚙️ Comandos disponibles
-Comando	Descripción
-pnpm start	Ejecuta el servidor en modo producción
-pnpm dev	Ejecuta el servidor con reinicio automático (nodemon)
-pnpm add <paquete>	Instala dependencias adicionales
-💡 Próximos pasos
+---
 
- Añadir Mutations para crear/editar scripts desde GraphQL
+## 🛠 Dependencias principales
 
- Agregar control de roles (reader, editor, reviewer)
+| Paquete            | Uso                                    |
+| ------------------ | -------------------------------------- |
+| **@apollo/server** | Motor GraphQL                          |
+| **express**        | Framework HTTP base                    |
+| **cors**           | Permitir llamadas desde otros orígenes |
+| **body-parser**    | Parseo de JSON                         |
+| **dotenv**         | Carga de variables de entorno          |
+| **mysql2**         | Cliente MySQL                          |
+| **graphql**        | Núcleo de GraphQL                      |
+| **nodemon**        | Reinicio automático en desarrollo      |
 
- Integrar autenticación JWT o sesión NWFG
+---
 
- Documentar queries automáticas con GraphQL Playground
+## ⚙️ Comandos disponibles
 
-👨‍💻 Autor
+| Comando              | Descripción                                           |
+| -------------------- | ----------------------------------------------------- |
+| `pnpm start`         | Ejecuta el servidor en modo producción                |
+| `pnpm dev`           | Ejecuta el servidor con reinicio automático (nodemon) |
+| `pnpm add <paquete>` | Instala dependencias adicionales                      |
 
-Desarrollado por Brian Llanes (bllanes)
-Integración: Ecosistema NWFG / TPV Call Center
-Tecnologías: Node.js, Express, Apollo, MySQL, GraphQL
+---
+
+## 💡 Próximos pasos
+
+* [ ] Añadir Mutations para crear/editar scripts desde GraphQL
+* [ ] Agregar control de roles (`reader`, `editor`, `reviewer`)
+* [ ] Integrar autenticación JWT o sesión NWFG
+* [ ] Documentar queries automáticas con **GraphQL Playground**
+
+---
+
+## 👨‍💻 Autor
+
+Desarrollado por **Brian Llanes (bllanes)**
+Integración: *Ecosistema NWFG / TPV Call Center*
+Tecnologías: *Node.js, Express, Apollo, MySQL, GraphQL*
+
+```
+
+---
+
+¿Quieres que te agregue al final un **diagrama visual de arquitectura** (en formato Mermaid para GitHub o VSCode) que muestre cómo se comunican los módulos y las bases de datos?  
+Ejemplo: `Frontend → GraphQL Server → MySQL (rates_db, scripts_db, staging)`
+```
