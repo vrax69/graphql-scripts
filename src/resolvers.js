@@ -1,12 +1,11 @@
 import { db } from "./db.js";
 import { userResolvers } from "./users/userResolvers.js";
-import { scriptResolvers } from "./scripts/scriptResolvers.js";
+
 import { dynamicResolvers } from "./scriptsDynamic/dynamicResolvers.js";
 
 export const resolvers = {
   Query: {
     ...userResolvers.Query,
-    ...scriptResolvers.Query,
     ...dynamicResolvers.Query,
     rates: async (_, { limit = 10 }) => {
       const [rows] = await db.query(`
@@ -23,7 +22,6 @@ export const resolvers = {
   },
   Mutation: {
     ...userResolvers.Mutation,
-    ...scriptResolvers.Mutation,
     ...dynamicResolvers.Mutation,
   },
 };

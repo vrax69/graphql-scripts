@@ -21,7 +21,7 @@ query GetRatePlans {
 # 2. Obtener plantilla de script sin renderizar
 query GetScriptTemplate {
   scriptTemplate(
-    supplier: "TXU Energy"
+    provider_name: "TXU Energy"
     state: "TX"
     channel: "phone"
     language: "es"
@@ -45,7 +45,7 @@ query GetScriptTemplate {
 # 3. Obtener script completo renderizado con datos reales
 query GetRenderedScript {
   renderedScript(
-    supplier: "TXU Energy"
+    provider_name: "TXU Energy"
     state: "TX"
     channel: "phone"
     language: "es"
@@ -95,7 +95,7 @@ query GetCompleteData {
   
   # Obtener plantilla
   scriptTemplate(
-    supplier: "TXU Energy"
+    provider_name: "TXU Energy"
     state: "TX"
     channel: "phone"
     language: "es"

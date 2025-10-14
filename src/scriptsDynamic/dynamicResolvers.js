@@ -1,126 +1,55 @@
-import { db } from "../db.js";
-import { renderScriptSection } from "./utils/renderEngine.js";
+// dynamicResolvers.js
+import { db } from "./db.js";
 
-export const dynamicResolvers = {
+export const resolvers = {
   Query: {
-    ratePlans: async (_, { state, supplier }) => {
-      try {
-        const [rows] = await db.query(`
-          SELECT * FROM rates_view
-          WHERE State = ? AND SPL = ?
-          LIMIT 10
-        `, [state, supplier]);
-        return rows;
-      } catch (error) {
-        console.error("Error fetching rate plans:", error);
-        throw new Error("Error al obtener planes de tarifas");
-      }
-    },
+    renderedScript: async (_, { script_id, rateContext }) => {
+      // Obtener el script principal
+      const [scriptRows] = await db.query(
+        `SELECT * FROM scripts WHERE script_id = ? LIMIT 1`, [script_id]
+      );
+      if (!scriptRows.length) return null;
+      const script = scriptRows[0];
 
-    scriptTemplate: async (_, { supplier, state, channel, language }) => {
-      try {
-        const [scripts] = await db.query(`
-          SELECT * FROM scripts_db.scripts
-          WHERE provider_name = ? AND state = ? AND channel = ? AND language = ?
-          LIMIT 1
-        `, [supplier, state, channel, language]);
+      // Obtener secciones
+      const [sections] = await db.query(
+        `SELECT * FROM script_sections WHERE script_id = ? ORDER BY section_order ASC`, [script_id]
+      );
 
-        if (!scripts.length) return null;
-
-        const [sections] = await db.query(`
-          SELECT section_id, section_order AS 'order', section_name AS title,
-                 section_text AS content_template, JSON_EXTRACT(conditions, '$') AS required_variables
-          FROM scripts_db.script_sections
-          WHERE script_id = ?
-          ORDER BY section_order ASC
-        `, [scripts[0].script_id]);
-
-        return {
-          template_id: scripts[0].script_id,
-          script_title: scripts[0].script_title,
-          supplier: scripts[0].provider_name,
-          state: scripts[0].state,
-          channel: scripts[0].channel,
-          language: scripts[0].language,
-          sections
-        };
-      } catch (error) {
-        console.error("Error fetching script template:", error);
-        throw new Error("Error al obtener plantilla de script");
-      }
-    },
-
-    renderedScript: async (_, { supplier, state, channel, language, rateId }) => {
-      try {
-        // Obtener la plantilla del script
-        const template = await dynamicResolvers.Query.scriptTemplate(_, { supplier, state, channel, language });
-        if (!template) return null;
-
-        // Obtener el plan de tarifas específico
-        const [ratePlans] = await db.query(`
-          SELECT * FROM rates_view
-          WHERE rate_id = ? AND State = ? AND SPL = ?
-          LIMIT 1
-        `, [rateId, state, supplier]);
-
-        if (!ratePlans.length) return null;
-
-        const ratePlan = ratePlans[0];
-
-        // Renderizar las secciones
-        const renderedSections = template.sections.map(section => ({
-          section_id: section.section_id,
-          order: section.order,
-          title: section.title,
-          rendered_content: renderScriptSection(section.content_template, ratePlan),
-          required_variables: section.required_variables
-        }));
-
-        return {
-          template_id: template.template_id,
-          script_title: template.script_title,
-          supplier: template.supplier,
-          state: template.state,
-          channel: template.channel,
-          language: template.language,
-          sections: renderedSections
-        };
-      } catch (error) {
-        console.error("Error rendering script:", error);
-        throw new Error("Error al renderizar script");
-      }
-    }
-  },
-
-  Mutation: {
-    updateScriptSection: async (_, { input }) => {
-      try {
-        const { section_id, title, content_template } = input;
-        
-        // Actualizar la sección en la base de datos
-        await db.query(`
-          UPDATE scripts_db.script_sections 
-          SET section_name = ?, section_text = ?
-          WHERE section_id = ?
-        `, [title, content_template, section_id]);
-
-        // Obtener la sección actualizada
-        const [updatedSections] = await db.query(`
-          SELECT section_id, section_order AS 'order', section_name AS title,
-                 section_text AS content_template, JSON_EXTRACT(conditions, '$') AS required_variables
-          FROM scripts_db.script_sections
-          WHERE section_id = ?
-        `, [section_id]);
-
-        if (!updatedSections.length) {
-          throw new Error(`Sección con ID ${section_id} no encontrada`);
+      // Filtrar por condiciones (state, service_type)
+      const filteredSections = sections.filter(sec => {
+        if (!sec.conditions) return true;
+        let cond;
+        try {
+          cond = JSON.parse(sec.conditions);
+        } catch {
+          cond = {};
         }
+        return (
+          (!cond.states || cond.states.includes(rateContext.State)) &&
+          (!cond.service_type || cond.service_type.includes(rateContext.Service_Type))
+        );
+      });
 
-        return updatedSections[0];
-      } catch (error) {
-        console.error("Error updating script section:", error);
-        throw new Error("Error al actualizar sección del script");
-      }
+      // Renderizar variables dentro del texto
+      const renderedSections = filteredSections.map(sec => {
+        let text = sec.section_text;
+        Object.entries(rateContext).forEach(([key, value]) => {
+          text = text.replaceAll(`[${key.toUpperCase()}]`, value || "");
+        });
+        return {
+          section_id: sec.section_id,
+          section_name: sec.section_name,
+          rendered_text: text
+        };
+      });
+
+      return {
+        script_id: script.script_id,
+        script_title: script.script_title,
+        provider_name: script.provider_name,
+        sections: renderedSections
+      };
     }
   }
 };
