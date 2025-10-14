@@ -1,5 +1,3 @@
-Perfecto 🔥 — aquí tienes el **README.md completo, limpio y formateado** para que lo copies y pegues directamente en tu proyecto (ya corregido para que se vea bien en GitHub o VSCode).
-Está en formato **Markdown estándar** con emojis, encabezados y tablas bien alineadas 👇
 
 ---
 
@@ -28,25 +26,25 @@ desde diferentes bases de datos **MySQL** conectadas al entorno de **call center
 ```
 
 graphql-scripts/
+src/
 │
-├── src/
-│   ├── db.js                 → Configuración y conexión a MySQL
-│   ├── index.js              → Punto de entrada (Express + Apollo Server)
-│   ├── schema.js             → Fusión de todos los esquemas GraphQL
-│   ├── resolvers.js          → Fusión de todos los resolvers
-│   │
-│   ├── users/                → Módulo de usuarios y proveedores
-│   │   ├── userSchema.js     → Tipos y queries de usuarios
-│   │   └── userResolvers.js  → Lógica SQL de consultas a usuarios
-│   │
-│   └── scripts/              → Módulo de guiones (scripts de venta)
-│       ├── scriptSchema.js   → Tipos y queries de scripts
-│       └── scriptResolvers.js→ Lógica SQL de consultas de scripts
+├── index.js                  # Arranque del servidor Apollo
+├── db.js                     # Conexión MySQL
+├── schema.js                 # Schema GraphQL principal
+├── resolvers.js              # Resolvers principales
 │
-├── .env                      → Variables de entorno
-├── package.json              → Dependencias y scripts de ejecución
-├── pnpm-lock.yaml            → Control de dependencias exacto
-└── README.md                 → Documentación del proyecto
+├── scriptsDynamic/
+│   ├── dynamicSchema.js      # Schema dinámico (scripts)
+│   ├── dynamicResolvers.js   # Resolvers dinámicos (scripts)   
+│   ├──testQueries.graphql    # Query de prueba usada en Apollo Studio
+│   └──utils/ 
+│      ├── renderEngine.js    # Motor de renderizado (reemplazo dinámico)
+│
+├── users/
+│   ├── userSchema.js         # Schema para usuarios
+│   ├── userResolvers.js      # Resolvers para usuarios
+
+
 
 ````
 
