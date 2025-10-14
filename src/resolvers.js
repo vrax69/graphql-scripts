@@ -20,8 +20,8 @@ export const resolvers = {
       return rows;
     },
   },
-  Mutation: {
-    ...userResolvers.Mutation,
-    ...dynamicResolvers.Mutation,
-  },
+  // Mutation: {
+  //   ...userResolvers.Mutation,
+  //   ...dynamicResolvers.Mutation,
+  // },
 };

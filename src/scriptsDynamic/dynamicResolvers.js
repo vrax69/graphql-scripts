@@ -1,7 +1,7 @@
 // dynamicResolvers.js
-import { db } from "./db.js";
+import { db } from "../db.js";
 
-export const resolvers = {
+export const dynamicResolvers = {
   Query: {
     renderedScript: async (_, { script_id, rateContext }) => {
       // Obtener el script principal

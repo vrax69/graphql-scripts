@@ -1,7 +1,6 @@
 import { gql } from "graphql-tag";
 import { userTypeDefs } from "./users/userSchema.js";
-import { dynamicTypeDefs } from "./scriptsDynamic/dynamicSchema.js";
-
+import { typeDefs as dynamicTypeDefs } from "./scriptsDynamic/dynamicSchema.js";
 
 export const typeDefs = [
   gql`
