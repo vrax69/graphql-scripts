@@ -341,3 +341,64 @@ Tecnologías: *Node.js, Express, Apollo, MySQL, GraphQL*
 ```
 
 estas son mis tablas actuales Table: script_assignments Columns: assignment_id bigint AI PK script_id bigint user_id bigint role enum('reader','editor','reviewer') Table: script_links Columns: link_id bigint AI PK script_id bigint rate_id varchar(50) utility_id bigint Table: script_sections Columns: section_id bigint AI PK script_id bigint section_order int section_name varchar(255) section_text longtext conditions json Table: scripts Columns: script_id bigint AI PK provider_name varchar(255) state varchar(50) language enum('EN','ES') channel enum('Inbound','Outbound','TPV','QA') script_title varchar(255) version varchar(50) content longtext created_at timestamp updated_at timestamp
+
+
+TRUNCATE TABLE script_sections;
+
+INSERT INTO script_sections (script_id, section_order, section_name, section_text, conditions) VALUES
+-- Introducción
+(1, 1, 'Pregunta de Introducción', 'Gracias por llamar a CTS, mi nombre es [AGENT_NAME]. Esta llamada está siendo grabada con propósitos de control de calidad. ¿En qué puedo ayudarle hoy?', '{}'),
+(1, 2, 'Respuesta: energy_needs', 'Puedo ayudarle con sus necesidades energéticas', '{"motivo": ["energy_needs"]}'),
+(1, 3, 'Respuesta: no_energy_needs', 'Entiendo. Aunque CTS no está asociado con la compañía de servicios públicos, vamos a ver si puedo ayudarle hoy. Después, puede recibir un paquete con opciones adicionales para su energía.', '{"motivo": ["no_energy_needs"]}'),
+
+-- Datos del cliente
+(1, 4, 'Datos del Cliente - Identificación', '• ¿Cuál es su nombre completo, por favor?\n• ¿Cuál es su dirección de servicio, incluyendo ciudad, estado y código postal?', '{}'),
+(1, 5, 'Datos del Cliente - Electricidad', '¿Cuál es el nombre de su compañía eléctrica?', '{"service_type": ["Electric"]}'),
+(1, 6, 'Datos del Cliente - Gas', '¿Cuál es el nombre de su compañía de gas?', '{"service_type": ["Gas"]}'),
+(1, 7, 'Datos del Cliente - Ambos Servicios', '¿Cuál es el nombre de su compañía eléctrica y de gas?', '{"service_type": ["Electric", "Gas"]}'),
+(1, 8, 'Datos del Cliente - pregunta porGas', '¿Cuál es el nombre de su compañía de gas? Si no tiene gas, no hay problema.', '{"service_type": ["Gas"]}'),
+
+-- Consentimiento
+(1, 9, 'Bloque de Consentimiento', 'Sr./Sra. [CUSTOMER_NAME], mi sistema muestra que usted puede calificar para participar en el Programa de Elección de Energía y recibir protección de precios en la porción de suministro de su [COMODITY], con un proveedor autorizado y aprobado en su estado.', '{}'),
+(1, 10, 'Bloque de Consentimiento – Parte 2', '¿Da también su consentimiento para que CTS le envíe nuestro código promocional por mensaje de texto a ese número?\nPuede revocar este consentimiento enviando un correo electrónico a optout@comparetosave.net o llamando al 8444093888 ¿de acuerdo?', '{}'),
+
+-- Términos y condiciones
+(1, 11, 'Inicio de Términos y Condiciones', 'La siguiente parte de la llamada es en nombre de [SUPPLIER], un proveedor de energía autorizado.\n\nUsted puede ser elegible para un precio protegido, plan de [COMODITY] renovable sin cambiar sus hábitos de servicios públicos. Todos los planes de [COMODITY] tienen una tarifa fija durante la duración del contrato. Por lo tanto, no importa lo alto que suban los precios de la [COMODITY], su precio está garantizado para no aumentar durante su plazo.\n\n[Además, podría recibir hasta 100 $ en tarjetas regalo Visa al inscribirse en determinados planes]. Sólo necesito confirmar que cumple los requisitos.', '{}'),
+(1, 12, 'Términos y Condiciones – Bono Visa', 'Además, podría recibir hasta 100 $ en tarjetas regalo Visa al inscribirse en determinados planes.', '{"product_name": ["Eco Rewards", "Gas Giveback"]}'),
+(1, 13, 'calificacion', 'Sólo necesito confirmar que cumple los requisitos.', '{}'),
+
+-- Verificaciones
+(1, 15, 'Verificación - Titular MD/DC/NH', 'Por favor confirme si es usted el titular de la cuenta.', '{"states": ["MD", "DC", "NH"]}'),
+(1, 16, 'Verificación - Titular Otros Estados', 'Por favor confirme si es usted el titular de la cuenta o la persona autorizada.', '{"exclude_states": ["MD", "DC", "NH"]}'),
+(1, 17, 'Verificación - Ayuda Gubernamental', 'Por favor confirme si recibe algún tipo de ayuda gubernamental para pagar su factura de energía.', '{}'),
+(1, 18, 'Verificación - Pagos', 'Por favor confirme si está al día con los pagos de su factura de electricidad.', '{}'),
+(1, 19, 'Verificación - Pagos 30 días', '¿Tiene más de 30 días de atraso en el pago de su factura de electricidad?', '{"states": ["PA", "OH"]}'),
+(1, 20, 'Verificación - Pagos 60 días', '¿Tiene más de 60 días de atraso en el pago de su factura de electricidad?', '{"exclude_states": ["PA", "OH"]}'),
+
+-- Inicio de inscripción
+(1, 21, 'Inicio de Inscripción', 'Según sus respuestas, usted cumple los requisitos. Ahora, para inscribirse en este nuevo plan de precio protegido, necesito que tome una copia de su factura de la luz y me avise cuando la tenga.\n\nAntes de continuar, debo informarle que, aunque no trabajo ni represento a su Empresa de Distribución Eléctrica ni a ningún otro Proveedor de Electricidad, participar en el programa Energy Choice es gratuito. Sin embargo, no se aplica automáticamente; es mi trabajo, en nombre de CleanSky Energy, ayudarle a asegurar una tarifa fija.', '{}'),
+
+-- Datos de verificación de factura
+(1, 22, 'Verificación - Datos de factura', '¿Cómo aparece el nombre en la factura, aunque esté mal escrito?', '{}'),
+(1, 23, 'Verificación - Nombre del contacto', '¿Y su nombre?', '{}'),
+(1, 24, 'Verificación - Dirección del servicio', '¿Cuál es la dirección de servicio exactamente como aparece en la factura, aunque esté mal escrita?', '{}'),
+(1, 25, 'Verificación - Dirección de facturación', '¿Es su dirección de facturación la misma que su dirección de servicio?', '{}'),
+(1, 26, 'Verificación - Compañía de servicios', 'Para proporcionarle las tarifas correctas, ¿cuál es el nombre de su compañía de servicios, por favor?', '{}'),
+(1, 27, 'Verificación - Número de cuenta', '¿Cuál es su número de cuenta?', '{}'),
+(1, 28, 'Verificación - Número de teléfono', 'Y su número de teléfono es [PHONE_NUMBER], ¿correcto?', '{}'),
+(1, 29, 'Verificación - Facturas adicionales', 'Muy bien. ¿Tiene alguna otra factura de la luz de esta u otra localidad?', '{}'),
+(1, 30, 'Verificación - Proveedor de gas', 'Si tiene gas natural, ¿quién es su proveedor de servicios de gas natural? También tenemos una gran oferta para eso.', '{}'),
+(1, 31, 'Verificación - Presencia de CleanSky', 'En la sección de suministro de su factura, ¿ve las palabras "CleanSky Energy"? (Necesita un "NO" para continuar)', '{}'),
+(1, 32, 'Verificación - Fecha de nacimiento (solo MA)', 'Por motivos de calidad de la inscripción, ¿cuál es su mes y fecha de nacimiento?', '{"states": ["MA"]}'),
+(1, 33, 'Verificación - luz en otro lugar', 'Muy bien. ¿Tiene alguna otra factura de la luz de esta u otra localidad?', '{}'),
+(1, 34, 'Verificación - ya cleansky', 'En la sección de suministro de su factura, ¿ve las palabras "CleanSky Energy"?', '{}'),
+
+-- Presentación del plan
+(1, 35, 'Anote', 'Genial, ahora anote su nueva tarifa eléctrica, que es nuestro plan de tarifas más popular:', '{}'),
+(1, 36, 'Presentación del Plan - Electricidad', '[[PLAN_TEXT]]', '{"service_type": ["Electric"], "plan_variants": {"Embrace 6": "El plan Embrace 6 ofrece [TERM] meses de ELECTRICIDAD 100% RENOVABLE y una tarifa fija de [RATE] por [UNIT_OF_MEASURE] sin cuotas mensuales.", "Embrace 12": "El plan Embrace 12 ofrece [TERM] meses de ELECTRICIDAD 100% RENOVABLE y una tarifa fija de [RATE] por [UNIT_OF_MEASURE] sin cuotas mensuales.", "Embrace 24": "El plan Embrace 24 ofrece [TERM] meses de ELECTRICIDAD 100% RENOVABLE y una tarifa fija de [RATE] por [UNIT_OF_MEASURE] sin cuotas mensuales.", "Eco Rewards 6": "El plan Eco Rewards 6 ofrece [TERM] meses de ELECTRICIDAD 100% RENOVABLE y una tarifa fija de [RATE] por [UNIT_OF_MEASURE] sin cuotas mensuales Y $100 en Tarjetas Regalo Visa dispersas a lo largo de su contrato.", "Eco Rewards 12": "El plan Eco Rewards 12 ofrece [TERM] meses de ELECTRICIDAD 100% RENOVABLE y una tarifa fija de [RATE] por [UNIT_OF_MEASURE] sin cuotas mensuales Y $100 en Tarjetas Regalo Visa dispersas a lo largo de su contrato.", "Eco Rewards 24": "El plan Eco Rewards 24 ofrece [TERM] meses de ELECTRICIDAD 100% RENOVABLE y una tarifa fija de [RATE] por [UNIT_OF_MEASURE] sin cuotas mensuales Y $100 en Tarjetas Regalo Visa dispersas a lo largo de su contrato."}}'),
+(1, 37, 'Presentación del Plan - Gas', '[[PLAN_TEXT_GAS]]', '{"service_type": ["Gas"], "plan_variants": {"Gas Give Back 24": "El plan Gas Give Back 24 ofrece [TERM] meses de GAS NATURAL con una tarifa fija de [RATE] por [UNIT_OF_MEASURE] sin cuotas mensuales y DOBLARÁ las recompensas de su tarjeta regalo Visa.", "Affordable Gas 12": "El plan Affordable Gas 12 ofrece [TERM] meses de GAS NATURAL con una tarifa fija de [RATE] por [UNIT_OF_MEASURE] sin cuotas mensuales."}}'),
+
+-- Cierre y facturación
+(1, 38, 'Cargo por Cancelación', 'Cargo por cancelación: Si decide cancelar su plan de protección de precios, después de su período de rescisión, habrá un pequeño cargo por cancelación de [[ETF_TEXT]].', '{"type": "etf_notice"}'),
+(1, 39, 'Diferencia en la Factura', 'La única diferencia que verá en su factura es una línea con el nombre de [SUPPLIER] como su nuevo proveedor, y esa tarifa aparecerá bajo la parte de suministro de la factura, eso es todo. ¿Entendido?', '{}');
+
