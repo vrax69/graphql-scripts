@@ -1,55 +1,53 @@
-// dynamicResolvers.js
+// src/scriptsDynamic/dynamicResolvers.js
 import { db } from "../db.js";
+import { renderScriptSection } from "./utils/renderEngine.js"; // 👈 asegúrate de importar esto
 
 export const dynamicResolvers = {
   Query: {
     renderedScript: async (_, { script_id, rateContext }) => {
-      // Obtener el script principal
-      const [scriptRows] = await db.query(
-        `SELECT * FROM scripts WHERE script_id = ? LIMIT 1`, [script_id]
+      const [scripts] = await db.query(
+        `SELECT * FROM scripts WHERE script_id = ? LIMIT 1`,
+        [script_id]
       );
-      if (!scriptRows.length) return null;
-      const script = scriptRows[0];
+      if (!scripts.length) return null;
+      const script = scripts[0];
 
-      // Obtener secciones
       const [sections] = await db.query(
-        `SELECT * FROM script_sections WHERE script_id = ? ORDER BY section_order ASC`, [script_id]
+        `SELECT * FROM script_sections WHERE script_id = ? ORDER BY section_order ASC`,
+        [script_id]
       );
 
-      // Filtrar por condiciones (state, service_type)
+      // Normalizar Service_Type
+      const serviceTypes = Array.isArray(rateContext.Service_Type)
+        ? rateContext.Service_Type
+        : [rateContext.Service_Type].filter(Boolean);
+
+      // Filtrado de condiciones
       const filteredSections = sections.filter(sec => {
-        if (!sec.conditions) return true;
-        let cond;
-        try {
-          cond = JSON.parse(sec.conditions);
-        } catch {
-          cond = {};
-        }
+        let cond = {};
+        try { cond = JSON.parse(sec.conditions || "{}"); } catch {}
         return (
           (!cond.states || cond.states.includes(rateContext.State)) &&
-          (!cond.service_type || cond.service_type.includes(rateContext.Service_Type))
+          (!cond.service_type || cond.service_type.some(st => serviceTypes.includes(st))) &&
+          (!cond.product_name || cond.product_name.includes(rateContext.Product_Name))
         );
       });
 
-      // Renderizar variables dentro del texto
-      const renderedSections = filteredSections.map(sec => {
-        let text = sec.section_text;
-        Object.entries(rateContext).forEach(([key, value]) => {
-          text = text.replaceAll(`[${key.toUpperCase()}]`, value || "");
-        });
-        return {
-          section_id: sec.section_id,
-          section_name: sec.section_name,
-          rendered_text: text
-        };
-      });
+      // 🔧 Aplicar render dinámico correctamente
+      const renderedSections = filteredSections.map(sec => ({
+        section_id: sec.section_id,
+        section_name: sec.section_name,
+        rendered_text: renderScriptSection(sec.section_text, rateContext) // 👈 AQUÍ
+      }));
 
       return {
         script_id: script.script_id,
         script_title: script.script_title,
         provider_name: script.provider_name,
-        sections: renderedSections
+        language: script.language,
+        channel: script.channel,
+        sections: renderedSections,
       };
-    }
-  }
+    },
+  },
 };
