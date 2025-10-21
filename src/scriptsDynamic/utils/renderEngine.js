@@ -1,3 +1,5 @@
+// 🧠 renderEngine.js
+
 export function renderScriptSection(template, ratePlan = {}) {
   if (!template || typeof template !== "string") return "";
 
@@ -33,19 +35,20 @@ export function renderScriptSection(template, ratePlan = {}) {
     "\\[PHONE_NUMBER\\]": ratePlan.Phone ?? "",
     "\\[STATE\\]": ratePlan.State ?? "",
     "\\[COMODITY\\]": serviceTypeText ?? "",
+    "\\[BONUS_AMOUNT\\]": ratePlan.BONUS_AMOUNT ?? "",
+    "\\[BONUS_TOTAL\\]": ratePlan.BONUS_TOTAL ?? "",
+    "\\[UTILITY_NAME\\]": ratePlan.Standard_Utility_Name ?? "",
   };
 
-  // 3️⃣ Aplicar reemplazos
+  // 3️⃣ Aplicar reemplazos globales
   let rendered = template;
   for (const [pattern, value] of Object.entries(replacements)) {
     rendered = rendered.replace(new RegExp(pattern, "g"), value);
   }
 
   // 4️⃣ Limpieza final del texto
-  rendered = rendered
-    .replace(/\s{2,}/g, " ") // eliminar dobles espacios
-    .replace(/\n{2,}/g, "\n") // limpiar saltos múltiples
+  return rendered
+    .replace(/\s{2,}/g, " ")
+    .replace(/\n{2,}/g, "\n")
     .trim();
-
-  return rendered;
 }
