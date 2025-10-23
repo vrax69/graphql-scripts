@@ -5,16 +5,20 @@ import bodyParser from "body-parser";
 import dotenv from "dotenv";
 import { ApolloServer } from "@apollo/server";
 import { startStandaloneServer } from "@apollo/server/standalone"; // ✅ usamos el modo standalone
-import { typeDefs } from "./schema.js";
-import { resolvers } from "./resolvers.js";
+import { typeDefs } from './scriptsDynamic/dynamicSchema.js';
+import { dynamicResolvers } from './scriptsDynamic/dynamicResolvers.js';
 import { db } from "./db.js";
+import GraphQLJSON from "graphql-type-json";
 
 dotenv.config();
 
 // Creamos el servidor Apollo (GraphQL)
 const server = new ApolloServer({
   typeDefs,
-  resolvers,
+  resolvers: {
+    JSON: GraphQLJSON,
+    ...dynamicResolvers
+  },
 });
 
 const PORT = process.env.PORT ;

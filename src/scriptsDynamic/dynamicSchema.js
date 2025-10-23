@@ -1,5 +1,7 @@
 // src/scriptsDynamic/dynamicSchema.js
 export const typeDefs = `#graphql
+  scalar JSON
+
   type RenderedSection {
     section_id: ID
     section_name: String
@@ -65,7 +67,7 @@ export const typeDefs = `#graphql
     section_order: Int
     section_name: String
     section_text: String
-    conditions: String
+    conditions: JSON
   }
 
   type Mutation {

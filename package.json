@@ -25,6 +25,7 @@
     "express": "^5.1.0",
     "graphql": "^16.11.0",
     "graphql-tag": "^2.12.6",
+    "graphql-type-json": "^0.3.2",
     "mysql2": "^3.15.2"
   },
   "devDependencies": {

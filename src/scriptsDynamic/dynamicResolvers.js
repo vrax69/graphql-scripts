@@ -1,6 +1,8 @@
 // src/scriptsDynamic/dynamicResolvers.js
 import { db } from "../db.js";
 import { renderScriptSection } from "./utils/renderEngine.js";
+import GraphQLJSON from 'graphql-type-json';
+
 // import { requireQAOrAdmin, requireAdmin } from "./utils/auth.js"; // Comentado para simplificar
 
 export const dynamicResolvers = {
