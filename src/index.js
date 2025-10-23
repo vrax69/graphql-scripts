@@ -22,7 +22,21 @@ const PORT = process.env.PORT ;
 // 🚀 Modo standalone de Apollo (ya incluye express interno)
 const { url } = await startStandaloneServer(server, {
   listen: { port: PORT },
-  context: async () => ({ db }),
+  context: async ({ req }) => {
+    // 🔐 Autenticación simplificada - el frontend manejará la validación
+    // Por ahora permitimos acceso libre para testing
+    const mockUser = {
+      id: 1,
+      nombre: "QA User",
+      rol: "QA",
+      email: "qa@test.com"
+    };
+    
+    return { 
+      db, 
+      user: mockUser
+    };
+  },
 });
 
 console.log(`🚀 Servidor GraphQL corriendo en ${url}`);
